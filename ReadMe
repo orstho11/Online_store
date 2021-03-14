@@ -1,4 +1,14 @@
 This is final project for SDA to create Online Store.
+
+start with an architecture of the solution,
+implementation of each layer (database, backend, frontend),
+project stored in a remote Git repository (Github, Bitbucket, GitLab),
+code reviews,
+README.md file with a detailed instruction about the project (what is it about, installation instructions, configuration, launching)
+presentation of the solution after the project.
+
+
+***
 def function():
 print('Hello World')
 print ('Good work')
