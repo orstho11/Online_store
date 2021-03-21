@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from Online_store.store.bboard import *
+#from bboard.views import index
 
 
 urlpatterns = [
-    path('index/', views.index),
+    #path('index/', index),
     path('admin/', admin.site.urls),
 ]
