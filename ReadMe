@@ -7,6 +7,8 @@ code reviews,
 README.md file with a detailed instruction about the project (what is it about, installation instructions, configuration, launching)
 presentation of the solution after the project.
 
+***
+Extras for online store: search bar and filters, user management, email sending, cart
 
 ***
 def function():
