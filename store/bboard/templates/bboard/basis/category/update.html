@@ -1,0 +1,22 @@
+{% extends "bboard/basis/base.html" %}
+{% block content %}
+<div class = "container">
+<h3> Edit category </h3>
+  <form action="{% url 'category_update' id=id %}" method="POST" >
+  {% csrf_token %}
+      {% if error %}
+    <div class="alert alert-danger" role="alert">
+  {{ error }}
+</div>
+    {% endif %}
+
+{{ form.as_p }}
+
+    <button class="btn btn-outline-success btn-block btn-sm" type="submit">Save</button>
+
+  </form>
+    <a class="btn btn-outline-secondary btn-block btn-sm" href="{% url 'category_delete' pk=id %}">Delete</a>
+
+
+</div>
+{% endblock %}
