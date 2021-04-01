@@ -1,0 +1,65 @@
+{% extends "bboard/basis/base.html" %}
+{% block content %}
+
+    <section class="jumbotron text-center">
+    <div class="container">
+        <h1>About product</h1>
+    </div>
+  </section>
+<div class="container" id="m_content">
+<row>
+    <div class="col">
+    </div>
+<div class="col-6">
+        <form>
+            {% csrf_token %}
+          <div class="form-group">
+              <img src="{{ product.thumbnail.url }}" class="card-img-top">
+              <br>
+          <br>
+          <h3>{{ product.name }}</h3>
+          <br>
+          <label class="font-weight-bold">Description</label>
+          <br>
+          <p class="text-justify">{{ product.description }}</p>
+
+               <br>
+          <label class="font-weight-bold">Amount</label>
+          <br>
+          <p class="text-justify">{{ product.amount }}</p>
+
+               <br>
+          <label class="font-weight-bold">Price</label>
+          <br>
+          <p class="text-justify">{{ product.price }}</p>
+
+               <br>
+          <label class="font-weight-bold">Category</label>
+          <br>
+          <p class="text-justify">{{ product.id_category.name }}</p>
+
+               <br>
+          <label class="font-weight-bold">Product type</label>
+          <br>
+          <p class="text-justify">{{ product.id_product_type.name }}</p>
+
+               <br>
+          <label class="font-weight-bold">Author</label>
+          <br>
+          <p class="text-justify">{{ product.id_author.name }} {{ product.id_author.surname }}</p>
+
+          </div>
+
+
+        </form>
+    <a href="{% url 'product_update' id=product.id %}" class="btn btn-outline-secondary btn-block btn-sm">Edit</a>
+
+    </div>
+
+    <a href="{% url 'product_delete' id=product.id %}" class="btn btn-outline-secondary btn-block btn-sm">Delete</a>
+
+<div class="col">
+    </div>
+</row>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "bboard/basis/base.html" %}
+{% block content %}
+<div class="container">
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product</th>
+            <th scope="col">Number of products</th>
+            <th scope="col">Product price</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+{% for line in order_lines  %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}
+</th>
+            <td >{{ line.id_product.name}}</td>
+
+            <td >{{ line.number_of_products}}</td>
+
+            <td >{{ line.product_price}}</td>
+
+        </tr>
+
+{% endfor %}
+
+
+        </tbody>
+    </table>
+
+
+</div>
+{% endblock %}

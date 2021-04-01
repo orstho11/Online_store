@@ -1,0 +1,22 @@
+{% extends "bboard/basis/base.html" %}
+{% block content %}
+<div class = "container">
+<h3> Edit product </h3>
+  <form action="{% url 'product_update' id=id %}" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+      {% if error %}
+    <div class="alert alert-danger" role="alert">
+  {{ error }}
+</div>
+    {% endif %}
+{{ form.media }}
+
+{{ form.as_p }}
+
+    <button class="w-100 btn btn-lg btn-outline-success mt-3" type="submit">Save</button>
+
+  </form>
+
+
+</div>
+{% endblock %}

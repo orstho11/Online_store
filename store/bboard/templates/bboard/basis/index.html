@@ -11,7 +11,7 @@
 
 </div></div>
     <div class="col-sm-8">{% if products|length %}
-
+<a href="{% url 'product_create' %}" class="btn btn-outline-success btn-block btn-sm">Add product</a>
         <table class="table">
             <thead>
             <tr>
@@ -27,10 +27,11 @@
     {% for product in products  %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td >{{ product.name}}</td>
+                <td > <a href="{% url 'product_detail' id=product.id %}" >{{ product.name}}</a></td>
                 <td >{{ product.description}}</td>
                 <td >{{ product.amount}}</td>
                 <td >{{ product.price}}</td>
+
 
             </tr>
 
