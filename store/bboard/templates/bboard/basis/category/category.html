@@ -1,15 +1,25 @@
 {% extends "bboard/basis/base.html" %}
 {% block content %}
 <div class="container">
-<a class="btn btn-outline-success btn-block btn-sm" href="{% url 'category_create' %}">Add category</a>
+
+    {% if user.id_type_user_profile.name == "admin" %}
+       <a class="btn btn-outline-success btn-block btn-sm" href="{% url 'category_create' %}">Add category</a>
+      {% endif %}
+
+
     <table class="table">
         <thead>
         <tr>
             <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">View product</th>
-            <th scope="col">Edit</th>
-        </tr>
+
+            {% if user.id_type_user_profile.name == "admin" %}
+       <th scope="col">Edit</th>
+      {% endif %}
+
+
+                    </tr>
         </thead>
         <tbody>
 
@@ -22,9 +32,17 @@
             <td>
                 <a class="btn btn-outline-secondary btn-block btn-sm" href="{% url 'product_from_category' id=category.id %}">View</a>
             </td>
+
+            {% if user.id_type_user_profile.name == "admin" %}
+
+
+
             <td>
+
+
                 <a class="btn btn-outline-secondary btn-block btn-sm" href="{% url 'category_update' id=category.id %}">Edit</a>
             </td>
+            {% endif %}
         </tr>
 
 {% endfor %}

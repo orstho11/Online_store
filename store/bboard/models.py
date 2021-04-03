@@ -8,6 +8,8 @@ User = get_user_model()
 # Create your models here.
 class TypeUserProfile(models.Model):
     name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
 
 
 
@@ -17,7 +19,7 @@ class UserProfile(models.Model):
     surname = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
-    phone = models.CharField(max_length=17)
+    user_address = models.CharField(max_length=255)
     id_type_user_profile = models.ForeignKey(TypeUserProfile, on_delete=models.CASCADE)
     class Meta:
         db_table = "customer"

@@ -2,27 +2,47 @@
 {% block content %}
 <div class = "container">
 <main class="form-signin">
-  <form>
+  <form action="{% url 'registration'%}" method="POST" >
+  {% csrf_token %}
+
+
 
     <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
 
     <div class="form-floating">
-      <input type="email" class="form-control mt-3" id="floatingInput" placeholder="name@example.com">
+      <input type="email" class="form-control mt-3" id="floatingInput" placeholder="name@example.com" name = "email">
       <label for="floatingInput">Email address</label>
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control mt-3" id="floatingPassword" placeholder="Password">
+      <input type="password" class="form-control mt-3" id="floatingPassword" placeholder="Password" name = "password">
       <label for="floatingPassword">Password</label>
     </div>
-    <div class="form-floating">
-      <input type="password" class="form-control mt-3" id="Repeat" placeholder="Repeat Password">
-      <label for="Repeat">Repeat Password</label>
-    </div>
+  <div class="form-floating">
+        <input type="password" class="form-control mt-3" id="" placeholder="Repeat password" name = "password_2">
+        <label for="floatingPassword">Repeat password</label>
+      </div>
 
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
+    <div class="form-floating">
+        <input type="text" class="form-control mt-3" id="" placeholder="name" name = "name">
+        <label for="floatingPassword">Name</label>
+      </div>
+
+    <div class="form-floating">
+        <input type="text" class="form-control mt-3" id="" placeholder="surname" name = "surname">
+        <label for="floatingPassword">Surname</label>
+      </div>
+
+    <div class="form-floating">
+        <input type="text" class="form-control mt-3" placeholder="address" name = "address">
+        <label for="floatingPassword">User address</label>
+      </div>
+
+
+<p>{{login_error}} </p>
+    <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Sign up</button>
 
   </form>
-    <a class="w-100 btn btn-lg btn-primary mt-5" href="{% url 'signin' %}">Sign in</a>
+  <a class="w-100 btn btn-lg btn-primary mt-5" href="{% url 'signin' %}">Sign in</a>
 </main>
 </div>
 {% endblock %}

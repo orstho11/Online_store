@@ -52,11 +52,31 @@
 
 
         </form>
-    <a href="{% url 'product_update' id=product.id %}" class="btn btn-outline-secondary btn-block btn-sm">Edit</a>
+
 
     </div>
 
-    <a href="{% url 'product_delete' id=product.id %}" class="btn btn-outline-secondary btn-block btn-sm">Delete</a>
+
+     {% if user.id_type_user_profile.name == "admin" %}
+       <a href="{% url 'product_update' id=product.id %}" class="btn btn-outline-secondary btn-block btn-sm">Edit</a>
+        <a href="{% url 'product_delete' id=product.id %}" class="btn btn-outline-secondary btn-block btn-sm">Delete</a>
+      {% endif %}
+
+
+
+
+
+     <form action="{% url 'cart'%}" method="POST" id="cart_block" >
+  {% csrf_token %}
+    <div class="form-floating">
+      <input type="hidden" value = "{{product.id}}" name = "product_id">
+
+    </div>
+
+    <button class="btn btn-outline-secondary btn-block btn-sm" type="submit">Add to cart</button>
+
+  </form>
+
 
 <div class="col">
     </div>

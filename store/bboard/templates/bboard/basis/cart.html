@@ -1,7 +1,7 @@
 {% extends "bboard/basis/base.html" %}
 {% block content %}
 <div class="container">
-
+{% if order_lines|length %}
     <table class="table">
         <thead>
         <tr>
@@ -18,7 +18,7 @@
         <tr>
             <th scope="row">{{ forloop.counter }}
 </th>
-            <td >{{ line.id_product.name}}</td>
+            <td >{{ line.product.name}}</td>
 
             <td >{{ line.number_of_products}}</td>
 
@@ -29,9 +29,22 @@
 {% endfor %}
 
 
+
         </tbody>
     </table>
 
+
+    <form action="{% url 'cart_delete'%}" method="POST" >
+  {% csrf_token %}
+ <button class="btn btn-danger" type="submit">Clear cart</button>
+
+
+  </form>
+
+    {% else  %}
+        <p>No products found in the cart. </p>
+
+    {% endif %}
 
 </div>
 {% endblock %}

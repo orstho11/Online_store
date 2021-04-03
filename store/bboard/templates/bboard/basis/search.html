@@ -1,22 +1,8 @@
 {% extends "bboard/basis/base.html" %}
 {% block content %}
+<div class="container">
 
-  <div class="row mt-5">
-    <div class="col-sm-4"><h3 align="center">Categories</h3> <div class="list-group">
-  {% for category in categories  %}
-       <a href="{% url 'product_from_category' id=category.id %}" class="list-group-item list-group-item-action">{{ category.name}}</a>
-
-{% endfor %}
-<a href="{% url 'category' %}" class="list-group-item list-group-item-action">All categories</a>
-
-</div></div>
-    <div class="col-sm-8">{% if products|length %}
-
-        {% if user.id_type_user_profile.name == "admin" %}
-        <a href="{% url 'product_create' %}" class="btn btn-outline-success btn-block btn-sm">Add product</a>
-
-
-      {% endif %}
+    {% if products|length %}
 
         <table class="table">
             <thead>
@@ -38,7 +24,6 @@
                 <td >{{ product.amount}}</td>
                 <td >{{ product.price}}</td>
 
-
             </tr>
 
     {% endfor %}
@@ -48,13 +33,9 @@
             </tbody>
         </table>
     {% else  %}
-        <p>No products found in the category. </p>
+        <p>No products found. </p>
 
-    {% endif %}</div>
+    {% endif %}
 
-  </div>
-
-
-
+</div>
 {% endblock %}
-
