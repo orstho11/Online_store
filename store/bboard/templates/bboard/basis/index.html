@@ -9,6 +9,13 @@
 {% endfor %}
 <a href="{% url 'category' %}" class="list-group-item list-group-item-action">All categories</a>
 
+ <h3 align="center">Filtering</h3>
+   <form action="" method="get" align="center">
+    {{form.as_p}}
+     <input type="submit" value="filter" class="btn btn-outline-success">
+
+</form>
+
 </div></div>
     <div class="col-sm-8">{% if products|length %}
 
@@ -50,7 +57,22 @@
     {% else  %}
         <p>No products found in the category. </p>
 
-    {% endif %}</div>
+    {% endif %}
+        <div class="pagination">
+ <span class="step-links">
+  {% if page.has_previous %}
+      <a href="?page={{ page.previous_page_number }}&{{param_page}}">Previous</a>
+  {% endif %}
+    <span class="current">
+  Page {{ page.number }} of {{ page.paginator.num_pages }}
+    </span>
+  {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}&{{param_page}}">Next</a>
+  {% endif %}
+  </span>
+</div>
+
+    </div>
 
   </div>
 

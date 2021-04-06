@@ -1,7 +1,7 @@
 {% extends "bboard/basis/base.html" %}
 {% block content %}
 <div class="container">
-{% if order_lines|length %}
+
     <table class="table">
         <thead>
         <tr>
@@ -34,18 +34,6 @@
     </table>
 
 
-    <form action="{% url 'cart_delete'%}" method="POST" >
-  {% csrf_token %}
- <button class="btn btn-danger" type="submit">Clear cart</button>
-
-
-  </form>
-    <a class="btn btn-outline-secondary" href="{% url 'buy' %}">Buy</a>
-
-    {% else  %}
-        <p>No products found in the cart. </p>
-
-    {% endif %}
 
 </div>
 {% endblock %}

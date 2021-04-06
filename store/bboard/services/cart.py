@@ -14,9 +14,11 @@ def add_to_cart(request):
     try:
         order_line = OrderLine.objects.filter(id_cart=cart, product=product).first()
         if order_line is not None:
-            OrderLine.objects.filter(id=order_line.id).update(number_of_products=order_line.number_of_products + 1,
-                                                              product_price=order_line.product_price + product.price)
+            if product.amount > order_line.number_of_products + 1:
+                OrderLine.objects.filter(id=order_line.id).update(number_of_products=order_line.number_of_products + 1, product_price=order_line.product_price + product.price)
+
         else:
             raise
     except:
-        OrderLine.objects.create(id_cart=cart, product=product, number_of_products=1, product_price=product.price)
+        if product.amount > 0:
+            OrderLine.objects.create(id_cart=cart, product=product, number_of_products=1, product_price=product.price)

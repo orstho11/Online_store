@@ -6,22 +6,55 @@ from django.urls import reverse_lazy
 from .services.services import get_userprofile
 from .services.cart import add_to_cart
 from django.shortcuts import render
-from .models import Product, Category,Cart, OrderLine, UserProfile, User, TypeUserProfile
+from .models import Product, Category,Cart, OrderLine, UserProfile, User, TypeUserProfile, Status, Order
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View, DeleteView
-from .forms import CategoryForm, ProductForm
+from .forms import CategoryForm, ProductForm, ProductFilterForm
+from .services.weather import get_weather
+from django.core.paginator import Paginator
+import datetime
+
+
+
+
 
 # Create your views here.
 
-def bboard(request):
+def bboard(request, **kwargs):
     user = get_userprofile(request)
     products = Product.objects.all()
     categories = Category.objects.all()[:2]
-    return render(request,'bboard/basis/index.html', {'user':user, 'products':products,'categories':categories})
+    weather = get_weather(user)
+    form = ProductFilterForm(request.GET)
+    product_per_page = 2
+    if form.is_valid():
+        if form.cleaned_data['min_price']:
+           products = products.filter(price__gte= form.cleaned_data['min_price'])
+        if form.cleaned_data['max_price']:
+           products = products.filter(price__lte= form.cleaned_data['max_price'])
+        if form.cleaned_data['product_per_page']:
+           product_per_page = form.cleaned_data['product_per_page']
+    page_number = request.GET.get('page', 1)
+    paginator = Paginator(products, product_per_page)
+    page = paginator.get_page(page_number)
+    d = request.GET.copy()
+
+    for k, v in kwargs.items():
+        d[k] = v
+    for k in [k for k, v in d.items() if not v]:
+        del d[k]
+
+    try:
+        d.pop('page')
+    except:
+        pass
+    t = d.urlencode()
+
+    return render(request,'bboard/basis/index.html', {'user':user, 'products':page, 'page': page, 'categories':categories, 'weather': weather, 'form': form, 'param_page': t})
 
 
 def signin(request):
@@ -50,7 +83,10 @@ def registration(request):
         password_2 = request.POST.get("password_2")
         name = request.POST.get("name")
         surname = request.POST.get("surname")
-        address = request.POST.get("address")
+        country = request.POST.get("country")
+        city = request.POST.get("city")
+        zip_code = int(request.POST.get("zip_code"))
+        street = request.POST.get("street")
         user = User.objects.filter(username = email)
         if user:
             error = "User already exists"
@@ -60,7 +96,8 @@ def registration(request):
             User.objects.create_user(email, email, password)
             user = authenticate(request, username=email, password=password)
             type = TypeUserProfile.objects.get(name = 'customer')
-            UserProfile.objects.create(user = user, name = name, surname = surname, user_address = address, email = email, id_type_user_profile =type)
+            UserProfile.objects.create(user = user, name = name, surname = surname, country = country, email = email,
+                                       id_type_user_profile =type, zip_code= zip_code, street = street, city = city)
 
             auth_login(request, user)
             return redirect("index")
@@ -207,13 +244,40 @@ class CartView(View):
             return redirect('cart')
 
 
+class BuyView(View):
+    def get(self, request):
+        user = get_userprofile(request)
+        cart = Cart.objects.get(id_customer=user)
+        order_lines = OrderLine.objects.filter(id_cart=cart)
+        return render(request, 'bboard/basis/buy.html', {'user': user, 'order_lines': order_lines})
+
+    def post(self, request):
+        user = get_userprofile(request)
+        cart = Cart.objects.get(id_customer=user)
+        order_lines = OrderLine.objects.filter(id_cart=cart)
+        delivery_address = request.POST.get("delivery_address")
+        status = Status.objects.get(name = 'In progress')
+        total = 0
+        for line in order_lines:
+           total += line.product_price * line.number_of_products
+        order = Order.objects.create(id_user_profile=user, total= total, delivery_address=delivery_address, date_of_submission= datetime.datetime.now(), id_status=status)
+
+        for line in order_lines:
+            OrderLine.objects.filter(id=line.id).update(id_order=order, id_cart = None)
+            order_line = OrderLine.objects.get(id=line.id)
+            product = Product.objects.get(id = order_line.product.id)
+            Product.objects.filter(id= product.id).update(amount=product.amount-order_line.number_of_products)
+        return redirect('order')
+
+
 class CartDeleteView(View):
     def post(self, request):
         user = get_userprofile(request)
         cart = Cart.objects.get(id_customer=user)
         order_lines = OrderLine.objects.filter(id_cart=cart)
         for line in order_lines:
-            line.delete()
+          #  line.delete()
+            OrderLine.objects.filter(id=line.id).update(id_cart= None)
         return redirect('cart')
 
 
@@ -238,6 +302,15 @@ class SearchView(View):
         return render(request, 'bboard/basis/search.html', {'user': user, 'products': product_list})
 
 @login_required(login_url="signin")
-def purchase(request):
+def order(request):
     user = get_userprofile(request)
-    return render(request,'bboard/basis/purchase.html',{'user':user})
+    orders = Order.objects.filter(id_user_profile=user)
+
+    return render(request,'bboard/basis/order.html',{'user':user, 'orders': orders})
+
+
+def order_details(request, id):
+    order = Order.objects.get(id = id)
+    order_lines = OrderLine.objects.filter(id_order= order)
+    user = get_userprofile(request)
+    return render(request, 'bboard/basis/order_details.html', {'user': user, 'order_lines': order_lines})

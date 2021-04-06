@@ -65,3 +65,9 @@ class ProductForm(forms.ModelForm):
 
 
         }
+
+class ProductFilterForm(forms.Form):
+    min_price = forms.IntegerField(label='price from:', required=False,widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    max_price = forms.IntegerField(label='price to:', required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    CHOICES = (('2', '2'),('3', '3'), ('4', '4'))
+    product_per_page = forms.ChoiceField(choices = CHOICES,label= 'Product per page', required=False, widget=forms.Select(attrs={'class': 'form-control'}))

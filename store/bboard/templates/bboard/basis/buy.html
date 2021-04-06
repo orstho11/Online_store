@@ -1,0 +1,72 @@
+{% extends "bboard/basis/base.html" %}
+{% block content %}
+<div class="container">
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product</th>
+            <th scope="col">Number of products</th>
+            <th scope="col">Product price</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+{% for line in order_lines  %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}
+</th>
+            <td >{{ line.product.name}}</td>
+
+            <td >{{ line.number_of_products}}</td>
+
+            <td >{{ line.product_price}}</td>
+
+        </tr>
+
+{% endfor %}
+
+
+
+        </tbody>
+    </table>
+
+
+    <h3>User information</h3>
+          <br>
+          <label class="font-weight-bold">Name</label>
+          <br>
+          <p class="text-justify">{{ user.name }}</p>
+
+               <br>
+
+
+    <label class="font-weight-bold">Surname</label>
+          <br>
+          <p class="text-justify">{{ user.surname }}</p>
+
+               <br>
+
+
+    <label class="font-weight-bold">User address</label>
+          <br>
+          <p class="text-justify">{{ user.country }} {{ user.zip_code }} {{ user.city }} {{ user.street }}</p>
+
+               <br>
+
+
+    <form action="{% url 'buy'%}" method="POST" >
+  {% csrf_token %}
+
+
+ <div class="form-floating">
+      <input type="text" required class="form-control mt-3" id="floatingInput" placeholder="Delivery address" name = "delivery_address">
+      <label for="floatingInput">Delivery address</label>
+    </div>
+ <button class="btn btn-danger" type="submit">Buy</button>
+  </form>
+
+</div>
+{% endblock %}

@@ -19,8 +19,12 @@ class UserProfile(models.Model):
     surname = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
-    user_address = models.CharField(max_length=255)
+    #user_address = models.CharField(max_length=255)
     id_type_user_profile = models.ForeignKey(TypeUserProfile, on_delete=models.CASCADE)
+    country = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    street = models.CharField(max_length=50)
+    zip_code = models.IntegerField()
     class Meta:
         db_table = "customer"
 
@@ -61,12 +65,6 @@ class Cart(models.Model):
     id_customer = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
 
 
-class OrderLine(models.Model):
-    id_cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    product =models.ForeignKey(Product, on_delete=models.CASCADE)
-    number_of_products = models.IntegerField()
-    product_price = models.FloatField()
-
 class Status(models.Model):
     name = models.CharField(max_length=255)
 
@@ -77,3 +75,16 @@ class Order(models.Model):
     delivery_address = models.CharField(max_length=255)
     date_of_submission = models.DateField()
     id_status = models.ForeignKey(Status,on_delete=models.CASCADE)
+
+
+class OrderLine(models.Model):
+    id_cart = models.ForeignKey(Cart, on_delete=models.CASCADE, blank=True, null=True)
+    product =models.ForeignKey(Product, on_delete=models.CASCADE)
+    number_of_products = models.IntegerField()
+    product_price = models.FloatField()
+    id_order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True)
+
+
+
+
+
