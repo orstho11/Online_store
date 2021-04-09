@@ -1,0 +1,43 @@
+{% extends "bboard/basis/base.html" %}
+{% block content %}
+<div class="container">
+
+    {% if orders|length %}
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Total</th>
+                <th scope="col">Delivery address</th>
+                <th scope="col">Date of submission</th>
+                <th scope="col">Status</th>
+                <th scope="col">Change the status</th>
+            </tr>
+            </thead>
+
+    {% for order in orders  %}
+            <tr>
+                <th scope="row"><a href="{% url 'order_details' id=order.id %}" >{{ order.id}}</a></th>
+                <td >{{order.total}} </td>
+                <td >{{ order.delivery_address}}</td>
+                <td >{{ order.date_of_submission}}</td>
+                <td >{{ order.id_status.name}}</td>
+                <td>
+                  <a class="btn btn-outline-secondary btn-block btn-sm" href="{% url 'admin_order_update' id=order.id %}">Change</a>
+              </td>
+            </tr>
+
+    {% endfor %}
+
+
+
+            </tbody>
+        </table>
+    {% else  %}
+        <p>No products found in the category. </p>
+
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.views.decorators.csrf import csrf_exempt
+
 
 urlpatterns = [
     path('', views.bboard, name = 'index'),
@@ -24,4 +26,8 @@ urlpatterns = [
     path('cart/delete', views.CartDeleteView.as_view(), name = 'cart_delete'),
     path('search', views.SearchView.as_view(), name = 'search'),
     path('buy', views.BuyView.as_view(), name = 'buy'),
+    path('admin/order', views.OrderAdminView.as_view(), name = 'admin_order'),
+    path('admin/order/<int:id>/update', views.OrderAdminUpdate.as_view(), name = 'admin_order_update'),
+    path('product/search', csrf_exempt(views.search_ajax), name='product_search'),
+
 ]

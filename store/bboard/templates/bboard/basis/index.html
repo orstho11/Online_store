@@ -1,63 +1,87 @@
 {% extends "bboard/basis/base.html" %}
 {% block content %}
 
-  <div class="row mt-5">
+<div class="row mt-5">
     <div class="col-sm-4"><h3 align="center">Categories</h3> <div class="list-group">
-  {% for category in categories  %}
-       <a href="{% url 'product_from_category' id=category.id %}" class="list-group-item list-group-item-action">{{ category.name}}</a>
+        {% for category in categories  %}
+        <a href="{% url 'product_from_category' id=category.id %}" class="list-group-item list-group-item-action">{{ category.name}}</a>
 
-{% endfor %}
-<a href="{% url 'category' %}" class="list-group-item list-group-item-action">All categories</a>
+        {% endfor %}
+        <a href="{% url 'category' %}" class="list-group-item list-group-item-action">All categories</a>
 
- <h3 align="center">Filtering</h3>
-   <form action="" method="get" align="center">
-    {{form.as_p}}
-     <input type="submit" value="filter" class="btn btn-outline-success">
+        <h3 align="center">Filtering</h3>
+        <form action="" method="get" align="center">
+            {{form.as_p}}
+            <input type="submit" value="filter" class="btn btn-outline-success">
 
-</form>
+        </form>
 
-</div></div>
+    </div></div>
     <div class="col-sm-8">{% if products|length %}
 
         {% if user.id_type_user_profile.name == "admin" %}
         <a href="{% url 'product_create' %}" class="btn btn-outline-success btn-block btn-sm">Add product</a>
 
 
-      {% endif %}
+        {% endif %}
 
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Price</th>
+        <div class = "tableSearchOutput" >
 
-            </tr>
-            </thead>
+            <table class="table">
+                <thead>
+                <tr>
 
-    {% for product in products  %}
-            <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td > <a href="{% url 'product_detail' id=product.id %}" >{{ product.name}}</a></td>
-                <td >{{ product.description}}</td>
-                <td >{{ product.amount}}</td>
-                <td >{{ product.price}}</td>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Price</th>
+
+                </tr>
+                </thead>
+                <tbody class="tableBody">
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class = "indexTable" >
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Price</th>
+
+                </tr>
+                </thead>
+
+                {% for product in products  %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td > <a href="{% url 'product_detail' id=product.id %}" >{{ product.name}}</a></td>
+                    <td >{{ product.description}}</td>
+                    <td >{{ product.amount}}</td>
+                    <td >{{ product.price}}</td>
 
 
-            </tr>
+                </tr>
 
-    {% endfor %}
+                {% endfor %}
 
 
 
-            </tbody>
-        </table>
-    {% else  %}
-        <p>No products found in the category. </p>
+                </tbody>
+            </table>
+            {% else  %}
+            <p>No products found in the category. </p>
 
-    {% endif %}
+            {% endif %}
+
+        </div>
+
         <div class="pagination">
  <span class="step-links">
   {% if page.has_previous %}
@@ -70,11 +94,11 @@
         <a href="?page={{ page.next_page_number }}&{{param_page}}">Next</a>
   {% endif %}
   </span>
-</div>
+        </div>
 
     </div>
 
-  </div>
+</div>
 
 
 

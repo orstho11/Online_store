@@ -67,6 +67,8 @@ class Cart(models.Model):
 
 class Status(models.Model):
     name = models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):
@@ -75,6 +77,7 @@ class Order(models.Model):
     delivery_address = models.CharField(max_length=255)
     date_of_submission = models.DateField()
     id_status = models.ForeignKey(Status,on_delete=models.CASCADE)
+
 
 
 class OrderLine(models.Model):

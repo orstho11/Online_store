@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy
 
 from .services.services import get_userprofile
@@ -13,10 +13,21 @@ from django.contrib.auth import authenticate
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View, DeleteView
-from .forms import CategoryForm, ProductForm, ProductFilterForm
+from .forms import CategoryForm, ProductForm, ProductFilterForm, OrderForm
 from .services.weather import get_weather
 from django.core.paginator import Paginator
 import datetime
+from django.contrib.auth.mixins import UserPassesTestMixin
+
+
+
+class IsAdminMixin(UserPassesTestMixin):
+    def test_func(self):
+        user = get_userprofile(self.request)
+        return user.id_type_user_profile.name == 'admin'
+
+    def handle_no_permission(self):
+        return redirect('index')
 
 
 
@@ -118,7 +129,7 @@ def product(request):
     return render(request,'bboard/basis/products/product.html', {'products':products,'user':user})
 
 
-class ProductCreateView(View):
+class ProductCreateView(IsAdminMixin, View):
     def get(self, request):
         form = ProductForm
         user = get_userprofile(request)
@@ -140,7 +151,7 @@ def product_from_category(request, id):
     return render(request, 'bboard/basis/products/product.html', {'products': products,'user':user})
 
 
-class ProductUpdateView(View):
+class ProductUpdateView(IsAdminMixin, View):
     def get(self, request, id):
         product= Product.objects.get(id = id)
         form = ProductForm(instance=product)
@@ -158,7 +169,7 @@ class ProductUpdateView(View):
             return render(request, 'bboard/basis/products/update.html', {'form': form, 'user': user, 'error': error, 'id': id})
 
 
-class ProductDeleteView(View):
+class ProductDeleteView(IsAdminMixin, View):
     def get(self, request, id):
         product= Product.objects.get(id = id)
         user = get_userprofile(request)
@@ -183,7 +194,7 @@ def category(request):
 
 
 
-class CategoryCreateView(View):
+class CategoryCreateView(IsAdminMixin, View):
     def get(self, request):
         form = CategoryForm
         user = get_userprofile(request)
@@ -197,7 +208,7 @@ class CategoryCreateView(View):
             error = form.errors
             user = get_userprofile(request)
             return render(request, 'bboard/basis/category/create.html', {'form': form, 'user': user, 'error':error})
-class CategoryUpdateView(View):
+class CategoryUpdateView(IsAdminMixin, View):
     def get(self, request, id):
         category = Category.objects.get(id = id)
         form = CategoryForm(instance=category)
@@ -215,7 +226,7 @@ class CategoryUpdateView(View):
             return render(request, 'bboard/basis/category/update.html', {'form': form, 'user': user, 'error': error, 'id': id})
 
 
-class CategoryDeleteView(DeleteView):
+class CategoryDeleteView(IsAdminMixin, DeleteView):
     model = Category
     template_name = 'bboard/basis/category/delete.html'
     success_url = reverse_lazy('category')
@@ -301,16 +312,51 @@ class SearchView(View):
                     product_list.append(product)
         return render(request, 'bboard/basis/search.html', {'user': user, 'products': product_list})
 
+
+def search_ajax(request):
+    if request.method == 'POST':
+        search_body = json.loads(request.body).get('searchQuery')
+        products = Product.objects.filter(name__icontains=search_body) | Product.objects.filter(description__icontains=search_body)
+        data = products.values()
+        return JsonResponse(list(data), safe=False)
+
+
 @login_required(login_url="signin")
 def order(request):
     user = get_userprofile(request)
     orders = Order.objects.filter(id_user_profile=user)
 
-    return render(request,'bboard/basis/order.html',{'user':user, 'orders': orders})
+    return render(request,'bboard/basis/order/order.html',{'user':user, 'orders': orders})
 
 
 def order_details(request, id):
     order = Order.objects.get(id = id)
     order_lines = OrderLine.objects.filter(id_order= order)
     user = get_userprofile(request)
-    return render(request, 'bboard/basis/order_details.html', {'user': user, 'order_lines': order_lines})
+    return render(request, 'bboard/basis/order/order_details.html', {'user': user, 'order_lines': order_lines})
+
+
+class OrderAdminView(IsAdminMixin, View):
+    def get(self, request):
+        user = get_userprofile(request)
+        orders = Order.objects.all()
+        return render(request, 'bboard/basis/order/admin_order.html', {'user': user, 'orders': orders})
+
+
+class OrderAdminUpdate(IsAdminMixin, View):
+    def get(self, request, id):
+        order = Order.objects.get(id = id)
+        form = OrderForm(instance=order)
+        user = get_userprofile(request)
+        return render(request, 'bboard/basis/order/admin_order_update.html', {'user': user, 'form': form, 'id': id})
+
+    def post(self, request, id):
+        order = Order.objects.get(id=id)
+        form = OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_order')
+        else:
+            error = form.errors
+            user = get_userprofile(request)
+            return render(request, 'bboard/basis/order/admin_order_update.html', {'user': user, 'form': form, 'id': id, 'error': error})
