@@ -17,7 +17,7 @@ from .forms import CategoryForm, ProductForm, ProductFilterForm, OrderForm
 from .services.weather import get_weather
 from django.core.paginator import Paginator
 import datetime
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
 
 
 
@@ -180,7 +180,8 @@ class ProductDeleteView(IsAdminMixin, View):
         return redirect('index')
 
 
-class ProductDetailView(View):
+class ProductDetailView(PermissionRequiredMixin, View):
+    permission_required = ['bboard.view_product'] #PermissionRequiredMixin and permission_required added for beingable to addaccess rights in admin tool. In admin tool: 1. Create group. 2. assigned what is accesable for the created group
     def get(self, request, id):
         product= Product.objects.get(id = id)
         user = get_userprofile(request)
